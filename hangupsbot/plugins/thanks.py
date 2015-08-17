@@ -21,5 +21,5 @@ def _scan_for_triggers(bot, event, command):
     m = re.match(r'^thanks[, ]+(.*)$', text, re.I)
     if m:
         subject = m.group(1).lower()
-        subject = re.sub(r'^(y|[^aeiouy]+|)', 'th', subject)
+        subject = re.sub(r'^(y|[^aeiouyrlw]+|)', 'th', subject)
         bot.send_html_to_conversation(event.conv_id, subject)
