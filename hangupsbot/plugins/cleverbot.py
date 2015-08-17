@@ -200,18 +200,5 @@ def chat(bot, event, *args):
     bot.send_html_to_conversation(event.conv.id_, text)
 
 def _scan_for_triggers(bot, event, command):
-    try:
-        if not __cleverbots[event.conv.id_]:
-            __cleverbots[event.conv.id_] = Cleverbot()
-    except KeyError:
-        __cleverbots[event.conv.id_] = Cleverbot()
-
-    if random() < 0.01:
-        query = event.text
-
-        cb1 = __cleverbots[event.conv.id_]
-        text = cb1.ask(query)
-        if "Cleverscript.com." in text or "Clevermessage" in text or "Clevertweet" in text or "CleverEnglish" in text:
-            return
-        bot.send_html_to_conversation(event.conv.id_, text)
+    chat(bot, event, (event.text,))
 
