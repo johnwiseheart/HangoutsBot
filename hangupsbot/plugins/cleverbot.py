@@ -7,6 +7,7 @@ except ImportError:
     import urllib2
 
 from random import randrange
+from random import random
 
 import plugins
 
@@ -166,6 +167,7 @@ class Cleverbot:
 def _initialise(bot):
     plugins.register_handler(_handle_incoming_message, type="message")
     plugins.register_user_command(["chat"])
+    plugins.register_handler(_scan_for_triggers)
 
 
 @asyncio.coroutine
@@ -196,3 +198,8 @@ def chat(bot, event, *args):
     if "Cleverscript.com." in text or "Clevermessage" in text or "Clevertweet" in text or "CleverEnglish" in text:
         return
     bot.send_html_to_conversation(event.conv.id_, text)
+
+def _scan_for_triggers(bot, event, command):
+    if random < 0.01:
+        chat(bot, event, (event.text,))
+
