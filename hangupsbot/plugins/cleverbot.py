@@ -200,5 +200,6 @@ def chat(bot, event, *args):
     bot.send_html_to_conversation(event.conv.id_, text)
 
 def _scan_for_triggers(bot, event, command):
-    chat(bot, event, (event.text,))
+    if random < 0.01:
+        chat(bot, event, (event.text,))
 
