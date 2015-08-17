@@ -9,3 +9,5 @@ aiohttp
 /hangupsbot/__pycache__
 /build
 /scripts
+
+log.txt
