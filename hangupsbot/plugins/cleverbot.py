@@ -104,9 +104,6 @@ class Cleverbot:
 
         answer = re.sub(r'\|([0-9A-F]{4})', fix_unicode, parsed['answer'])
 
-        print(answer)
-        print(parsed['answer'])
-
         # Add Cleverbot's reply to the conversation log
         self.conversation.append(answer)
 
