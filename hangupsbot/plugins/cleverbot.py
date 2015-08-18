@@ -1,4 +1,5 @@
 import hangups
+import re
 import hashlib, asyncio
 import urllib
 try:
@@ -101,10 +102,12 @@ class Cleverbot:
         if self.data['sessionid'] != '':
             self.data['sessionid'] = parsed['conversation_id']
 
-        # Add Cleverbot's reply to the conversation log
-        self.conversation.append(parsed['answer'])
+        answer = re.sub(r'|([0-9A-F]{4})', fix_unicode, message)
 
-        return parsed['answer']
+        # Add Cleverbot's reply to the conversation log
+        self.conversation.append(answer)
+
+        return answer
 
     def _send(self):
         """POST the user's question and all required information to the
@@ -203,3 +206,6 @@ def _scan_for_triggers(bot, event, command):
     if random < 0.01:
         chat(bot, event, (event.text,))
 
+
+def fix_unicode(match):
+    return chr(int(match.group(1), 16))
