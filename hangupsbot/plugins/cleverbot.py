@@ -1,7 +1,7 @@
 import hangups
-import re
 import hashlib, asyncio
 import urllib
+import re
 try:
     import urllib.request as urllib2
 except ImportError:
@@ -102,7 +102,7 @@ class Cleverbot:
         if self.data['sessionid'] != '':
             self.data['sessionid'] = parsed['conversation_id']
 
-        answer = re.sub(r'|([0-9A-F]{4})', fix_unicode, message)
+        answer = re.sub(r'|([0-9A-F]{4})', fix_unicode, parsed['answer'])
 
         # Add Cleverbot's reply to the conversation log
         self.conversation.append(answer)
