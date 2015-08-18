@@ -201,5 +201,5 @@ def chat(bot, event, *args):
 
 def _scan_for_triggers(bot, event, command):
     if random() < 0.01:
-        chat(bot, event, (event.text,))
+        chat(bot, event, event.text)
 
