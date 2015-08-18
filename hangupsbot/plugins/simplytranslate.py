@@ -25,18 +25,18 @@ def _handle_message(bot, event, command):
     if translate_target is not None:
         yield from _translate(bot, event, raw_text, translate_target[0], translate_target[1])
     else:
-    	try:
-    		lang_id = gs.detect(raw_text)
-    		if lang_id != 'en':
-    			yield from _translate(bot, event, raw_text, lang_id, gs.get_languages()[lang_id])
-		except urllib.error.HTTPError as e:
-		    print("Translation server error: <i>{}</i>".format(str(e)))
+        try:
+            lang_id = gs.detect(raw_text)
+            if lang_id != 'en':
+                yield from _translate(bot, event, raw_text, 'en', 'from ' + gs.get_languages()[lang_id])
+        except urllib.error.HTTPError as e:
+            print("Translation server error: <i>{}</i>".format(str(e)))
 
 @asyncio.coroutine
 def _translate(bot, event, text, iso_language, text_language):
     print(_('TRANSLATE: "{}" to {}').format(text, iso_language))
     try:
         translated = gs.translate(text, iso_language)
-        bot.send_message_parsed(event.conv, "<i>" + text_language + "</i> : " + translated)
+        bot.send_message_parsed(event.conv, "<i>" + text_language + "</i>: " + translated)
     except urllib.error.HTTPError as e:
         bot.send_message_parsed(event.conv, "Translation server error: <i>{}</i>".format(str(e)))

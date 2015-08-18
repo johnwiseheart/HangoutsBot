@@ -102,7 +102,7 @@ class Cleverbot:
         if self.data['sessionid'] != '':
             self.data['sessionid'] = parsed['conversation_id']
 
-        answer = re.sub(r'|([0-9A-F]{4})', fix_unicode, parsed['answer'])
+        answer = re.sub(r'\|([0-9A-F]{4})', fix_unicode, parsed['answer'])
 
         # Add Cleverbot's reply to the conversation log
         self.conversation.append(answer)
@@ -208,4 +208,5 @@ def _scan_for_triggers(bot, event, command):
 
 
 def fix_unicode(match):
-    return chr(int(match.group(1), 16))
+    if match.group(1) is not None:
+        return chr(int(match.group(1), 16))
