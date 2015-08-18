@@ -27,8 +27,9 @@ def _handle_message(bot, event, command):
     else:
         try:
             lang_id = gs.detect(raw_text)
-            if lang_id != 'en':
-                yield from _translate(bot, event, raw_text, 'en', 'from ' + gs.get_languages()[lang_id])
+            new_text = gs.translate(raw_text, 'en')
+            if lang_id != 'en' and new_text != raw_text:
+                bot.send_message_parsed(event.conv, "<i>from " + gs.get_languages()[lang_id] + "</i>: " + new_text)
         except urllib.error.HTTPError as e:
             print("Translation server error: <i>{}</i>".format(str(e)))
 
