@@ -25,41 +25,50 @@ def generate(bot, event, comments, user, name):
     bot.sent_html_to_conversation(event.conv_id, model.generate_markov_text())
 
 
-def get_strings(path, limit=1000, batch_size=100, comments=False):
-    """Fetch a reddit listing from reddit.com."""
+    def get_strings(path, limit=1000, batch_size=100, comments=False, user=False):
+        """Fetch a reddit listing from reddit.com."""
 
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": "python:subreddit-sim-hangouts:1.0 (by /u/ravrahn)",
-    })
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "python:subreddit-sim-commandline:1.0 (by /u/ravrahn)",
+        })
 
-    base_url = "https://api.reddit.com" + path
+        if user:
+            path = '/user/{}'.format(path)
+        else:
+            path = '/r/{}'.format(path)
 
-    if comments:
-        base_url += "/comments"
+        base_url = "https://api.reddit.com" + path
 
-    after = None
-    count = 0
-    while count < limit:
-        params = {"limit": batch_size, "count": count}
-        if after:
-            params["after"] = after
-        print(base_url)
-        response = session.get(base_url, params=params)
-        response.raise_for_status()
+        if comments:
+            base_url += "/comments"
+        elif user:
+            base_url += '/submitted'
 
-        listing = json.loads(response.text)["data"]
-        for child in listing["children"]:
-            if comments:
-                yield child["data"]["body"]
-            else:
-                yield child["data"]["title"]
-            count += 1
+        after = None
+        count = 0
+        while count < limit:
+            params = {"limit": batch_size, "count": count}
+            if after:
+                params["after"] = after
 
-        after = listing["after"]
-        if not after:
-            break
+            response = session.get(base_url, params=params)
+            response.raise_for_status()
 
-        # obey reddit.com's ratelimits - 100 every 2 seconds
-        if limit > batch_size:
-            time.sleep(2)
+            listing = json.loads(response.text)["data"]
+
+            for child in listing["children"]:
+                if comments:
+                    yield child["data"]["body"]
+                else:
+                    yield child["data"]["title"]
+                count += 1
+
+            after = listing["after"]
+            if not after:
+                break
+
+            # obey reddit.com's ratelimits
+            # see: https://github.com/reddit/reddit/wiki/API#rules
+            if limit > batch_size:
+                time.sleep(2)
