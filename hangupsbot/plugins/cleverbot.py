@@ -4,7 +4,7 @@ import urllib.request as urllib2
 from http.cookiejar import CookieJar
 
 from random import randrange, randint, random
-
+import re
 import hangups
 
 import plugins
