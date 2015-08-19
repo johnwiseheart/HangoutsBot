@@ -1,111 +1,179 @@
-HangoutsBot
-==============
+# Introduction
 
-Before you get started, I highly recommend you take a look at [xmikos's Hangupsbot](https://github.com/xmikos/hangupsbot) from which this is a fork of. 
+Hangupsbot is a chat bot designed for working with Google Hangouts.
 
-Setup
---------------
+Please see:
+* [Instructions for installing](https://github.com/hangoutsbot/hangoutsbot/blob/master/INSTALL.md)
+* [Issue tracker](https://github.com/hangoutsbot/hangoutsbot/issues) for bugs, issues and feature requests
+* [Wiki](https://github.com/hangoutsbot/hangoutsbot/wiki) for everything else
 
-In order to use this, you'll need to setup a GMail account for logging in, and a config.json file (placed either at the folder root or in the Core folder) to give the bot its settings. The config file should look something like:
 
-```JSON
-{
-  "admins": ["YOUR-USER-ID-HERE"],
-  "autoreplies_enabled": true,
-  "autoreplies": [
-    [["^@[\\w\\s]+\\++$"],"/karma {}"],
-    [["^@[\\w\\s]+-+$"],"/karma {}"],
-    [["bot", "robot", "Yo"], "/think {}"]
-  ],
-  "development_mode": false,
-  "commands_admin": ["hangouts", "reload", "quit", "config", "block", "record clear"],
-  "commands_conversation_admin": ["leave", "echo", "block"],
-  "commands_enabled": true,
-  "forwarding_enabled": false,
-  "rename_watching_enabled": true,
-  "conversations": {
-    "CONV-ID-HERE": {
-      "conversation_admin": "USER-ID-HERE",
-      "autoreplies": [
-        [["whistle", "bot", "whistlebot"], "/think {}"],
-        [["trash"], "You're trash"]
-      ],
-      "forward_to": [  
-        "CONV1_ID" 
-      ]
-    }
-  }
-}
-```  
+## Repository Links
+* [GitHub Organisation](https://github.com/hangoutsbot)
+* [Translation Project](https://github.com/hangoutsbot/hangoutsbot-locales)
+* [Reference Hangups Library](https://github.com/hangoutsbot/hangups)
 
-If you neglect to create a config.json file, this exact one will be created for you in the Core folder.  
 
-Line by Line breakdown (excluding braces/brackets):  
-  
-1. Sets the admins. Only admins can use the admin commands listed in commands_admin.  
-2. Sets autoreplies to be enabled for every conversation the bot is in.  
-3. Sets the autoreplies for all conversations the bot is in.  
-4. Sets "Dev Mode" to default to off for all conversations. Dev Mode will force the bot to print out all of it's replies to the console window instead of replying via Hangouts.  
-5. Array of all of the commands that only admins will have access to use.  Note: You can block subcommands by explictly stating the command and subcommand (as in "record clear"). You can block all subcommands by using "command \*"  
-6. Array of all of the commands that only conversation admins and normal admins will have access to use.  
-7. Sets commands to be enabled for all chats.  
-8. Sets chat forwarding for all chats to disabled. (When enabled, you must have a conversation object with a "forward_to" member that is set to a different conversation id.)  
-9. Sets rename watching to enabled. (This is required to have /record record name changes.)  
-10. Start of the conversations dictionary.  
-11. Start of a conversation specific dictionary. "CONV-ID-HERE" should be replaced with an actual id, which looks something like "Ugxxxxxxxxxxx_xxxxxx4AaABAQ".  
-12. Sets the conversation admin for a specific conversation. Unlike the admins array on line 1, there can only be one conversation admin per conversation.  
-13. Sets the autoreplies for this specific conversation, which entirely overrides any autoreplies set for all conversations.  
-14. Sets an autoreply keyword and reply. In this case, "whistle", "bot", and "whistlebot" are all keywords, and the reply will be the command /think, which will be given the entirety of what the user posted. For example: A user saying "Bot, how are you?" would cause the command "/think Bot, how are you?" to be ran. NOTE: The keywords are case-insensitive.  
-15. Sets another autoreply keyword and reply. In this case, if a user says "trash," the Bot will reply with "You're trash." NOTE: The keywords are case-insensitive.  
-16. Start of the "forward_to" array. All conversation IDs listed here will have this conversation forwarded to them.  
-17. "CONV-ID-HERE" should be replaced with an actual id, which looks something like "Ugxxxxxxxxxxx_xxxxxxxxxxxxx", and then commands will be forwarded to that conversation.  
+## Features
+* **Mentions** :
+  If somebody mentions you in a room, receive a private hangout from the bot with details onthe mention,
+  including context, room and person who mentioned you.
+* **Syncouts** :
+  A syncout is two Hangout group chats that have their messages forwarded to each other, allowing seamless
+  interaction between the two rooms. Primarily used to beat the 150-member chat limit, but it can also be
+  used for temporarily connecting teams together to interact.
+* **Cross-chat Syncouts** :
+  Half of your team is on Slack? No problem! You can connect them into the same room to communicate.
+  Support for other chat clients coming soon.
+* [**Hubot Integration**](https://github.com/hangoutsbot/hangoutsbot/wiki/Hubot-Integration):
+  Hangupsbot allows you to connect to [Hubot](https://hubot.github.com/), instantly providing you access
+  to hundreds of developed chat tools and plugins.
+* **Plugins and sinks** :
+  The bot has [instructions for developing your own plugins and sinks]
+  (https://github.com/hangoutsbot/hangoutsbot/wiki/Authoring-Bot-Extensions), allowing the bot to interact
+  with external services such as your company website, Google scripts and much more.
+* **Plugin mania** :
+  games, nickname support, subscribed keywords, customizable API - [**the list goes on**]
+    (https://github.com/hangoutsbot/hangoutsbot/wiki/Plugin-List)!
 
-Note: Every top-level argument can be made a conversation level argument, which will overwrite the top level argument for that conversation. For instance, if you put a commands_admin array containing only "quit" and "block" in "CONV-ID-HERE", in the CONV-ID-HERE conversation, all users would be able to run /hangouts, /reload, /config, etc but would still be blocked from running /quit and /block. Conversely, if you put an empty commands_admin array in CONV-ID-HERE, all users in that conversation would be able to run all commands (except any commands in the "commands_conversation_admin" array unless they're a conversation admin.)  
+# Running The Bot
 
-A cookies.txt file will also be created, holding the cookies that are valid for your login.  
-  
-Usage
---------------
-To actually get the bot up and running, run the Main.py file. If you have Git installed, it will attempt to pull the 
-most recent version from the repo. If you don't want that functionality, simply delete the os.system("git pull") line from
-Main.py.  
+Note: **First run?** See the [installation instructions]
+  (https://github.com/hangoutsbot/hangoutsbot/blob/master/INSTALL.md)
 
-On first load, it will ask you for an Email and Password for a Google Account. Input that and the bot will start.    
+To execute: `python3 hangupsbot.py`
 
-Upon connection, test to make sure that the bot is functioning properly by starting a chat with it and using /ping. If it replies with 'pong', you're in business! If not, manually log into the bot's gmail account and see if it didn't auto-accept the Hangouts invitation.  
+```
+usage: hangupsbot [-h] [-d] [--log LOG] [--cookies COOKIES] [--memory MEMORY] [--config CONFIG] [--version]
 
-Adding Functionality
--------
-Any function created in the ExtraCommands.py file (or any .py file that imports the DispatcherSingleton and is manually imported in the Handlers.py file or placed in the Core/Commands folder) and decorated with the @DispatcherSingle.register annotation will be automatically picked up by the bot upon next restart. Commands are very simple and should be in the style of:  
+optional arguments:
+-h, --help         show this help message and exit
+-d, --debug        log detailed debugging messages (default: False)
+--log LOG          log file path (default:
+                   ~/.local/share/hangupsbot/hangupsbot.log)
+--cookies COOKIES  cookie storage path (default:
+                   ~/.local/share/hangupsbot/cookies.json)
+--memory MEMORY    memory storage path (default:
+                   ~/.local/share/hangupsbot/memory.json)
+--config CONFIG    config storage path (default:
+                   ~/.local/share/hangupsbot/config.json)
+--version          show program's version number and exit
+```
 
-```python  
-@DispatcherSingleton.register
-def command(bot, event, *args):
-    """Command
-    Usage: /command <required argument> <optional: optional argument> {for complicated commands, put an example call in curly braces}
-    Purpose: Does a thing."""
-    
-    # Do actual functionality here.
-```  
+# Bot Configuration for Administrators
 
-The docstring isn't necessary, but should be used as it will be printed out if a user uses "/help \<command name\>" or does "/\<command_name\> ?". Admin-only commands generally don't have help text by default, but that's left up to your discretion.
-   
-The bot variable is a reference to the HangoutsBot that is currently running. The event variable is a ConversationEvent that has information about the event (as in, text, the user who sent it, the conversation, and all users in the conversation.) The \*args variable is a tuple of all of the text sent along with the command call, split by whitespace so that you can easily check its values. Look at the DefaultCommands.py file for actual examples of how commands work.  
-  
-It should be frowned upon to force a user to put underscores in to use a command, but that's up to you to decide.
-  
-  
-  
-Have fun botting!
+Configuration directives can be specified in `config.json`.
 
-Extra
------------
-  
-Special credit to:  
-  
-[tdryer](https://github.com/tdryer/hangups) for the wonderful Hangups API.  
-[xmikos](https://github.com/xmikos/hangupsbot) for a flawless foundation and them some to build off of.  
-[DocJava](https://github.com/DocJava) for support, help, and rubber ducking.
-  
-  
-This is always going to be a work in progress, and has been built with a focus on my personal conversations, hence some of the more esoteric features. Regardless, I try to make it as accessible as possible for any one who does wish to use it. Expect a lot of changes and some weirdness.
+Please note that the `config.json` file supplied with the repository is not 
+  supposed to be edited/changed. It is the reference file used by the bot to 
+  create the actual configuration file located elsewhere in the system. To find out 
+  where the actual file is, please see the [**Additional Configuration** section]
+  (https://github.com/hangoutsbot/hangoutsbot/blob/master/INSTALL.md#additional-configuration)
+  in the [installation]
+  (https://github.com/hangoutsbot/hangoutsbot/blob/master/INSTALL.md)
+  instructions.
+
+Most configuration directives are specified **globally**
+* Global directives are always specified in the "root" of `config.json`.
+* To specify a per-conversation directive, the same configuration option should
+  be defined as `config.conversations[<conversation-id>].<configuration option>`.
+* Per-conversation directives override global settings, if both are set.
+* Manually-configured per-conversation directives are DEPRECATED.
+
+## Plugins
+
+The `plugins` key in `config.json` allows you to optionally specify a list of plugins
+  that will be loaded by the bot on startup. If this option is left as `null`, then
+  all available plugins will be loaded.
+
+To specify the plugins to be loaded, first ensure that the correct `.py` files are
+  inside your `hangupsbot/plugin/` directory, then modify the `plugins` key in
+  `config.json` to reflect which plugins/files you want to load e.g.
+    `plugins: ["mentions", "default", "chance", "syncrooms"]`
+
+Some plugins may require extra configuration.
+  `config.json` is the the configuration provider for the bot and its plugins.
+
+Some interesting plugins:
+* [mentions plugin]
+  (https://github.com/hangoutsbot/hangoutsbot/wiki/Mentions-Plugin)
+  * alert users when their names are mentioned in a chat
+* [subscribe plugin]
+  (https://github.com/hangoutsbot/hangoutsbot/wiki/Subscribe-Plugin)
+  * alert users when keywords they are subscribed to are said in a chat
+* [syncout / syncrooms plugins]
+  (https://github.com/hangoutsbot/hangoutsbot/wiki/Syncouts-Plugin)
+  * relay chat messages between different hangout group conversations (syncrooms)
+  * configure via bot commands (syncrooms_config)
+  * automated translation via Google Translate of relayed messages (syncrooms_autotranslate)
+
+The wiki has a more comprehensive **[list of plugins]
+  (https://github.com/hangoutsbot/hangoutsbot/wiki/Plugin-List)**...
+
+# Interacting with the Bot
+
+There are two general types of interactions with the bot:
+* **`/bot` commands** begin with `/bot` e.g. `/bot dosomething`
+  * some bot commands are admin-only
+* custom interactions (usage and accessibility varies by plugin)
+
+The base bot supports some basic command even without any plugins loaded.
+  Here is a partial list:
+
+`/bot help`
+* Bot lists all supported commands in a private message with the user
+
+`/bot ping`
+* Bot replies with a `pong`.
+
+`/bot version`
+* Bot replies with the version number of the framework
+
+A full list of commands supported by the base framework is available at the 
+  [**Core Commands**](https://github.com/hangoutsbot/hangoutsbot/wiki/Core-Commands)
+  wiki page.
+
+The wiki also has a 
+  [**list of plugins**](https://github.com/hangoutsbot/hangoutsbot/wiki/Plugin-List)
+  detailing available plugins with commands lists and usage.
+
+# Updating
+
+* Navigate to the bot directory (eg. `cd ~/hangupsbot`)
+* Change to the latest stable branch using `git checkout master`
+* `git pull` to pull the latest version of hangupsbot
+* `pip3 install -r requirements.txt --upgrade`
+* Restart the bot
+
+# Debugging
+
+* Run the bot with the `-d` parameter e.g. `python3 hangupsbot.py -d` - this
+  lowers the log level to `INFO` for a more verbose and informative log file.
+* `tail` the log file, which is probably located at
+  `/<user>/.local/share/hangupsbot/hangupsbot.log` - the location varies by
+  distro!
+* Console output (STDOUT) is fairly limited whatever the log level, so rely
+  on the output of the log file instead.
+
+## Tips for troubleshooting
+**Program isn't running:**
+* Update `hangupsbot` and `hangups`
+* Run `hangups` to check if the original hangups library is working
+  * If there are errors, delete the cookie at ``~/.local/share/hangupsbot/cookies.json` and try again
+  * Log into your Google Account from the server's address.
+
+**Bot isn't responding to messages:**
+* Check that the chats are not going into the 'Invites' section of Hangouts.
+
+# Extending
+
+Please see https://github.com/hangoutsbot/hangoutsbot/wiki/Authoring-Bot-Extensions
+
+# Credits / History
+
+Hangoutsbot is derived from the [mogunsamang](https://gitlab.sabah.io/eol/mogunsamang) bot,
+  which itself is a fork of xmikos's [hangupsbot](https://github.com/xmikos/hangupsbot)
+
+On 2015-06-20, this fork was detached and made standalone on GitHub
+
+On 2015-07-03, the fork was made into a Github Organisation
