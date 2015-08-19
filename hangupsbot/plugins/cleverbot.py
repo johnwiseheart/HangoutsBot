@@ -208,6 +208,7 @@ def chat(bot, event, *args):
     yield from bot.coro_send_message(event.conv.id_, text)
 
 def _scan_for_triggers(bot, event, command):
+    # chat one in one hundred times
     if random() < 0.01:
         chat(bot, event, event.text)
 
